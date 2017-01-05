@@ -35,4 +35,36 @@ if house_links.count < 101
 end
 
 first_house = agent.get("#{base_url}#{next_links[0]}")
-pp first_house.search('td')
+
+table_cells = first_house.search('td')
+
+def parse_one_to_one(table_cells)
+  datums = [ "Property Type", "Bedrooms", "Bathrooms", "Pets" ]
+  complete_data = {}
+
+  table_cells.each_with_index do |cell, index|
+    cell_first_content = cell.children[0].to_s.strip.chop
+
+    if datums.include?(cell_first_content)
+      pp table_cells[index + 1].children
+
+      complete_data.merge!({
+        cell_first_content.to_sym => table_cells[index + 1].children[1].children[0].to_s
+      })
+    end
+  end
+end
+
+complete_data = parse_one_to_one(table_cells)
+
+def parse_question_marks(table_cells)
+
+  table_cells.each_with_index do |cell, index|
+    if cell.children[2].to_s.match("Pets\:")
+      pp table_cells[index + 1].children[1].children[0].to_s.strip
+    end
+  end
+
+end
+
+# parse_pets(table_cells)
